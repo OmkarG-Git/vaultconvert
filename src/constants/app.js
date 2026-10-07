@@ -8,6 +8,8 @@ export const INITIAL_OPTIONS = {
   imageFormat: "jpeg",
   quality: ".92",
   compressQuality: ".88",
+  compressImageQuality: ".75",
+  compressImageFormat: "image/webp",
   watermark: "CONFIDENTIAL",
   watermarkOpacity: ".18",
   watermarkRotation: "35",

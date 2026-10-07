@@ -81,6 +81,14 @@ export function ActionSidebar({
 
       {action === "image-edit" && <ImageEditPanel selected={selected} mutateSelected={mutateSelected} />}
 
+      {action === "compress-image" && (
+        <Panel>
+          <label>Format<select value={options.compressImageFormat} onChange={(event) => setOpt("compressImageFormat", event.target.value)}><option value="image/webp">WebP</option><option value="image/jpeg">JPG</option></select></label>
+          <label>Quality<input type="range" min=".35" max=".95" step=".05" value={options.compressImageQuality} onChange={(event) => setOpt("compressImageQuality", event.target.value)} /></label>
+          <small className="hint">Lower quality usually creates a smaller file. The original image is not changed.</small>
+        </Panel>
+      )}
+
       {action === "image-pdf" && (
         <Panel>
           <label>Page size<select value={options.pageSize} onChange={(event) => setOpt("pageSize", event.target.value)}><option value="a4">A4</option><option value="auto">Original image size</option></select></label>

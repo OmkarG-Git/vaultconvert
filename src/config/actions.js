@@ -11,6 +11,7 @@ export const PDF_ACTIONS = [
 
 export const IMAGE_ACTIONS = [
   ["image-edit", "Edit image", "Rotate, flip and resize non-destructively"],
+  ["compress-image", "Compress image", "Reduce file size with JPG or WebP"],
   ["image-pdf", "Convert to PDF", "Create a PDF locally"],
   ["image-export", "Export image", "JPG, PNG or WebP"],
 ];
@@ -18,7 +19,7 @@ export const IMAGE_ACTIONS = [
 export const ICONS = {
   "edit-pages": "▦", extract: "⌘", merge: "⊕", "pdf-image": "▤",
   watermark: "◇", metadata: "ⓘ", "remove-metadata": "⌫", "compress-pdf": "◒",
-  "image-edit": "✦", "image-pdf": "▣", "image-export": "⇩",
+  "image-edit": "✦", "compress-image": "◒", "image-pdf": "▣", "image-export": "⇩",
 };
 
 export function actionsForDocument(selected, pdfCount = 0) {

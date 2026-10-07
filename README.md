@@ -25,6 +25,7 @@ DOCX, XLSX and PPTX are intentionally not advertised or processed.
 - PDF → JPG/PNG packaged into a ZIP using JSZip
 - Image → PDF with A4/original sizing, fit and margins
 - Image rotate, flip and resize with aspect-ratio control
+- Image compression to JPG or WebP with adjustable quality
 - JPG/PNG/WebP export
 - PDF watermark embedding
 - Standard PDF metadata inspection and removal

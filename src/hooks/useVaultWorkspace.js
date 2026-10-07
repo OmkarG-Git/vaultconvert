@@ -263,6 +263,15 @@ export function useVaultWorkspace() {
         return success("Edited image exported locally.");
       }
 
+      if (action === "compress-image") {
+        const canvas = await imageToCanvas(selected.file, selected.image);
+        const blob = await canvasBlob(canvas, options.compressImageFormat, Number(options.compressImageQuality));
+        const extension = options.compressImageFormat === "image/webp" ? "webp" : "jpg";
+        downloadBlob(blob, `${stripExtension(selected.name)}-compressed.${extension}`);
+        canvas.width = 1; canvas.height = 1;
+        return success(`Image exported · ${bytesToSize(selected.size)} → ${bytesToSize(blob.size)}.`);
+      }
+
       if (action === "image-export") {
         const canvas = await imageToCanvas(selected.file, selected.image);
         const blob = await canvasBlob(canvas, options.exportFormat, Number(options.quality));

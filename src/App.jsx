@@ -14,6 +14,7 @@ export default function App() {
     dragging,
     setDragging,
     addFiles,
+    uploading,
   } = workspace;
 
   const handleFiles = (event) => {
@@ -41,6 +42,7 @@ export default function App() {
             onDrop={handleDrop}
             onBrowse={() => inputRef.current?.click()}
             onFiles={handleFiles}
+            uploading={uploading}
           />
         ) : (
           <Workspace {...workspace} />

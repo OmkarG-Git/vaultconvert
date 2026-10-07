@@ -29,69 +29,78 @@ export function useVaultWorkspace() {
   const [action, setAction] = useState(null);
   const [options, setOptions] = useState(INITIAL_OPTIONS);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [status, setStatus] = useState("");
   const [notice, setNotice] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
   const inputRef = useRef(null);
+  const activeUploads = useRef(0);
 
   const selected = documents.find((d) => d.id === selectedId) || documents[0];
   const pdfs = useMemo(() => documents.filter((d) => d.kind === "pdf"), [documents]);
   const actions = useMemo(() => actionsForDocument(selected, pdfs.length), [selected, pdfs.length]);
 
   const addFiles = useCallback(async (fileList) => {
+    activeUploads.current += 1;
+    setUploading(true);
     setNotice(null);
     const incoming = [];
     const errors = [];
 
-    for (const raw of Array.from(fileList || [])) {
-      const kind = fileKind(raw);
-      if (!kind) {
-        const ext = raw.name.includes(".") ? raw.name.split(".").pop().toUpperCase() : "(none)";
-        errors.push(`${raw.name} · .${ext} · ${raw.type || "unknown MIME"} · ${bytesToSize(raw.size)} — This file type is not currently supported.`);
-        continue;
-      }
-
-      try {
-        const file = kind === "image" && raw.type !== imageMime(raw)
-          ? new File([raw], raw.name, { type: imageMime(raw), lastModified: raw.lastModified })
-          : raw;
-
-        const document = {
-          id: crypto.randomUUID(),
-          file,
-          name: file.name,
-          size: file.size,
-          kind,
-          dimensions: null,
-          pageCount: kind === "pdf" ? await getPdfPageCount(file) : 1,
-          thumbnail: null,
-          edits: emptyEdits(),
-          image: emptyImage(),
-          history: { past: [], future: [] },
-        };
-
-        if (kind === "pdf") document.thumbnail = await createThumbnail(file, 1, 0.28);
-        else {
-          document.dimensions = await imageInfo(file);
-          document.thumbnail = URL.createObjectURL(file);
+    try {
+      for (const raw of Array.from(fileList || [])) {
+        const kind = fileKind(raw);
+        if (!kind) {
+          const ext = raw.name.includes(".") ? raw.name.split(".").pop().toUpperCase() : "(none)";
+          errors.push(`${raw.name} · .${ext} · ${raw.type || "unknown MIME"} · ${bytesToSize(raw.size)} — This file type is not currently supported.`);
+          continue;
         }
-        incoming.push(document);
-      } catch (error) {
-        errors.push(`${raw.name}: ${error?.message || "Unable to open this file."}`);
+
+        try {
+          const file = kind === "image" && raw.type !== imageMime(raw)
+            ? new File([raw], raw.name, { type: imageMime(raw), lastModified: raw.lastModified })
+            : raw;
+
+          const document = {
+            id: crypto.randomUUID(),
+            file,
+            name: file.name,
+            size: file.size,
+            kind,
+            dimensions: null,
+            pageCount: kind === "pdf" ? await getPdfPageCount(file) : 1,
+            thumbnail: null,
+            edits: emptyEdits(),
+            image: emptyImage(),
+            history: { past: [], future: [] },
+          };
+
+          if (kind === "pdf") document.thumbnail = await createThumbnail(file, 1, 0.28);
+          else {
+            document.dimensions = await imageInfo(file);
+            document.thumbnail = URL.createObjectURL(file);
+          }
+          incoming.push(document);
+        } catch (error) {
+          errors.push(`${raw.name}: ${error?.message || "Unable to open this file."}`);
+        }
       }
-    }
 
-    if (!incoming.length) {
-      setNotice({ type: "error", text: errors.join(" ") || "No supported files were selected." });
-      return;
-    }
+      if (!incoming.length) {
+        setNotice({ type: "error", text: errors.join(" ") || "No supported files were selected." });
+        return;
+      }
 
-    setDocuments((current) => [...current, ...incoming]);
-    setSelectedId(incoming[0].id);
-    setPage(1);
-    setAction(null);
-    if (errors.length) setNotice({ type: "error", text: errors.join(" ") });
+      setDocuments((current) => [...current, ...incoming]);
+      setSelectedId(incoming[0].id);
+      setPage(1);
+      setAction(null);
+      if (errors.length) setNotice({ type: "error", text: errors.join(" ") });
+    } finally {
+      activeUploads.current -= 1;
+      if (activeUploads.current === 0) setUploading(false);
+    }
   }, []);
 
   const removeDoc = useCallback((id) => {
@@ -432,6 +441,7 @@ export function useVaultWorkspace() {
     notice,
     status,
     busy,
+    uploading,
     run,
     resetEdits,
     undo,

@@ -3,10 +3,11 @@ import { DocumentLibrary } from "./DocumentLibrary";
 import { PreviewArea } from "../preview/PreviewArea";
 import { ActionSidebar } from "../actions/ActionSidebar";
 import { ClearWorkspaceModal } from "./ClearWorkspaceModal";
+import { UploadIndicator } from "../layout/UploadIndicator";
 
 export function Workspace(props) {
   const {
-    documents, selected, selectedId, setSelectedId, pdfs, page, setPage,
+    documents, selected, selectedId, setSelectedId, pdfs, page, setPage, uploading,
     action, setAction, actions, inputRef, addFiles, removeDoc, clearWorkspace,
     setConfirmClear, confirmClear, notice, status, busy, run, resetEdits, undo,
     redo, rotatePage, deletePage, duplicatePage, movePage, visiblePages,
@@ -26,6 +27,8 @@ export function Workspace(props) {
         removeDoc={removeDoc}
         inputRef={inputRef}
       />
+
+      {uploading && <UploadIndicator compact />}
 
       <section className="workspace">
         <DocumentLibrary

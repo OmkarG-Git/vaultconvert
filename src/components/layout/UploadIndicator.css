@@ -1,0 +1,39 @@
+.upload-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #91a49a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.upload-progress.compact {
+  justify-content: flex-start;
+  padding: 10px 14px;
+  border: 1px solid #294437;
+  border-radius: 9px;
+  background: #0e1914;
+}
+
+.upload-spinner {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  border: 2px solid #294437;
+  border-top-color: #6fddaa;
+  border-radius: 50%;
+  animation: upload-spin 0.8s linear infinite;
+}
+
+@keyframes upload-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .upload-spinner {
+    animation-duration: 2s;
+  }
+}
